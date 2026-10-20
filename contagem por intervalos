@@ -1,0 +1,77 @@
+.data
+msg:  .asciiz "Numero (negativo encerra): "
+r1:   .asciiz "[0-25]: "
+r2:   .asciiz "[26-50]: "
+r3:   .asciiz "[51-75]: "
+r4:   .asciiz "[76-100]: "
+nl:   .asciiz "\n"
+
+.text
+main:
+    li   $t0, 0            # contador 0-25
+    li   $t1, 0            # contador 26-50
+    li   $t2, 0            # contador 51-75
+    li   $t3, 0            # contador 76-100
+
+leitura:
+    li   $v0, 4
+    la   $a0, msg
+    syscall
+    li   $v0, 5
+    syscall
+    move $t4, $v0
+
+    bltz $t4, fim          # negativo: encerra
+    bgt  $t4, 100, leitura # fora do intervalo: pede de novo
+
+    ble  $t4, 25, c1
+    ble  $t4, 50, c2
+    ble  $t4, 75, c3
+    addi $t3, $t3, 1
+    j    leitura
+c1: addi $t0, $t0, 1
+    j    leitura
+c2: addi $t1, $t1, 1
+    j    leitura
+c3: addi $t2, $t2, 1
+    j    leitura
+
+fim:
+    li   $v0, 4
+    la   $a0, r1
+    syscall
+    li   $v0, 1
+    move $a0, $t0
+    syscall
+    li   $v0, 4
+    la   $a0, nl
+    syscall
+
+    li   $v0, 4
+    la   $a0, r2
+    syscall
+    li   $v0, 1
+    move $a0, $t1
+    syscall
+    li   $v0, 4
+    la   $a0, nl
+    syscall
+
+    li   $v0, 4
+    la   $a0, r3
+    syscall
+    li   $v0, 1
+    move $a0, $t2
+    syscall
+    li   $v0, 4
+    la   $a0, nl
+    syscall
+
+    li   $v0, 4
+    la   $a0, r4
+    syscall
+    li   $v0, 1
+    move $a0, $t3
+    syscall
+    li   $v0, 10
+    syscall
